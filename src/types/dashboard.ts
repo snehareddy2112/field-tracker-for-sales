@@ -11,5 +11,5 @@ export interface DashboardStats {
 export interface AssociateSession {
   startTime?: string;
   totalDistance?: number;
-  status?: string;
+  status?: "ACTIVE" | "COMPLETED";
 }

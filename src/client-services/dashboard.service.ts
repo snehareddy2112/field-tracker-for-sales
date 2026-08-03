@@ -4,9 +4,12 @@ import {
   AssociateSession,
 } from "@/types/dashboard";
 
-export async function getAssociateSessions(): Promise<AssociateSession> {
+export async function getAssociateSessions(): Promise<AssociateSession | null> {
   const { data } = await api.get("/associate/session");
-  return data.data;
+
+  return Array.isArray(data.data)
+    ? data.data[0] ?? null
+    : data.data;
 }
 
 export async function getAssociateTimeline() {

@@ -7,41 +7,42 @@ import {
   getLeads,
 } from "@/client-services/dashboard.service";
 
-type DashboardRecord = object;
-
+import type { AssociateSession } from "@/types/dashboard";
 
 type TimelineActivity = {
   _id: string;
-
   latitude: number;
   longitude: number;
-
   notes: string;
-
   loggedAt: string;
-
   lead?: {
     _id?: string;
     name?: string | null;
   } | null;
 };
+
+type Lead = {
+  _id: string;
+  name: string;
+};
+
 export function useAssociateDashboard() {
   const [session, setSession] =
-    useState<DashboardRecord | null>(null);
+    useState<AssociateSession | null>(null);
 
   const [timeline, setTimeline] = useState<
     TimelineActivity[]
   >([]);
 
-  const [leads, setLeads] = useState<
-    DashboardRecord[]
-  >([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
+    async function loadDashboard() {
       try {
+        setLoading(true);
+
         const [
           sessionData,
           timelineData,
@@ -55,22 +56,24 @@ export function useAssociateDashboard() {
         setSession(sessionData);
         setTimeline(timelineData);
         setLeads(leadsData);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(
+          "Failed to load associate dashboard:",
+          error
+        );
       } finally {
         setLoading(false);
       }
     }
 
-    load();
+    loadDashboard();
   }, []);
 
-  const route: { latitude: number; longitude: number; title: string }[] =
-    timeline.map((activity: TimelineActivity) => ({
-      latitude: activity.latitude,
-      longitude: activity.longitude,
-      title: activity.lead?.name ?? "Meeting",
-    }));
+  const route = timeline.map((activity) => ({
+    latitude: activity.latitude,
+    longitude: activity.longitude,
+    title: activity.lead?.name ?? "Meeting",
+  }));
 
   return {
     loading,

@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 
 interface Props {
   loading: boolean;
+  status?: string;
   onStart: () => Promise<void>;
   onEnd: () => Promise<void>;
   onActivity: () => void;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function QuickActions({
   loading,
+  status,
   onStart,
   onEnd,
   onActivity,
@@ -24,6 +26,8 @@ export default function QuickActions({
 
   async function handleStart() {
     try {
+      if (status === "ACTIVE") return;
+
       setStarting(true);
       await onStart();
     } finally {
@@ -40,6 +44,9 @@ export default function QuickActions({
     }
   }
 
+  const isDayStarted = status === "ACTIVE";
+  const isDayCompleted = status === "COMPLETED";
+
   return (
     <Card className="p-6">
       <h2 className="mb-6 text-xl font-semibold">
@@ -48,29 +55,58 @@ export default function QuickActions({
 
       <div className="flex flex-wrap gap-4">
 
+        {/* Start Day */}
+
         <Button
-          disabled={loading || starting || ending}
           onClick={handleStart}
+          disabled={
+            loading ||
+            starting ||
+            ending ||
+            isDayStarted ||
+            isDayCompleted
+          }
         >
           <Play className="mr-2 h-4 w-4" />
-          {starting ? "Starting..." : "Start Day"}
+
+          {starting
+            ? "Starting..."
+            : isDayStarted
+            ? "✓ Day Started"
+            : isDayCompleted
+            ? "✓ Day Completed"
+            : "Start Day"}
         </Button>
+
+        {/* Log Activity */}
 
         <Button
           variant="outline"
-          disabled={starting || ending}
           onClick={onActivity}
+          disabled={
+            starting ||
+            ending ||
+            !isDayStarted
+          }
         >
           <Plus className="mr-2 h-4 w-4" />
           Log Activity
         </Button>
 
+        {/* End Day */}
+
         <Button
           variant="destructive"
-          disabled={loading || starting || ending}
           onClick={handleEnd}
+          disabled={
+            loading ||
+            starting ||
+            ending ||
+            !isDayStarted
+          }
         >
           <Square className="mr-2 h-4 w-4" />
+
           {ending ? "Ending..." : "End Day"}
         </Button>
 

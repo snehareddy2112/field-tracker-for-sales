@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,25 @@ export default function LogActivityDialog({
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape" && !saving) {
+        onClose();
+      }
+    }
+
+    if (open) {
+      window.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+    };
+  }, [open, saving, onClose]);
+
   if (!open) return null;
 
   async function handleSave() {
@@ -38,7 +57,7 @@ export default function LogActivityDialog({
     try {
       setSaving(true);
 
-      await onSubmit(leadId, notes);
+      await onSubmit(leadId, notes.trim());
 
       setLeadId("");
       setNotes("");
@@ -48,19 +67,26 @@ export default function LogActivityDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl">
-
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      onClick={() => {
+        if (!saving) onClose();
+      }}
+    >
+      <div
+        className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-2xl font-bold">
-          Log Activity
+          Log Customer Interaction
         </h2>
 
-        <p className="mt-1 text-sm text-slate-500">
-          Record today&apos;s customer interaction.
+        <p className="mt-2 text-sm text-slate-500">
+          Record today&apos;s customer meeting or visit.
         </p>
 
         <select
-          className="mt-6 h-11 w-full rounded-xl border border-slate-300 px-4"
+          className="mt-6 h-11 w-full rounded-xl border border-slate-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={leadId}
           disabled={saving}
           onChange={(e) => setLeadId(e.target.value)}
@@ -79,14 +105,13 @@ export default function LogActivityDialog({
 
         <Input
           className="mt-4"
-          placeholder="Meeting notes..."
+          placeholder="Enter meeting summary, discussion points, follow-up..."
           value={notes}
           disabled={saving}
           onChange={(e) => setNotes(e.target.value)}
         />
 
         <div className="mt-6 flex justify-end gap-3">
-
           <Button
             variant="outline"
             disabled={saving}
@@ -107,9 +132,7 @@ export default function LogActivityDialog({
               ? "Saving..."
               : "Save Activity"}
           </Button>
-
         </div>
-
       </div>
     </div>
   );

@@ -95,7 +95,6 @@ export default function AssociateDashboard() {
         totalDistance?: number;
       }
     | undefined;
-
   async function handleStartDay() {
     try {
       const location = await getLocation();
@@ -111,9 +110,7 @@ export default function AssociateDashboard() {
   "🌞 Day started successfully! Have a productive day."
 );
 
-setTimeout(() => {
-  window.location.reload();
-}, 1500);
+window.location.reload();
     } catch (err: unknown) {
       const error = err as {
         response?: {
@@ -143,9 +140,7 @@ setTimeout(() => {
   "🎉 Day ended successfully! Great work today."
 );
 
-setTimeout(() => {
-  window.location.reload();
-}, 1500);
+window.location.reload();
     } catch (err: unknown) {
       const error = err as {
         response?: {
@@ -182,9 +177,7 @@ setTimeout(() => {
 
 setOpenDialog(false);
 
-setTimeout(() => {
-  window.location.reload();
-}, 1200);
+window.location.reload();
     } catch (err: unknown) {
       const error = err as {
         response?: {
@@ -205,7 +198,12 @@ setTimeout(() => {
       title="Associate Dashboard"
     >
       <div className="space-y-8">
-        <GreetingCard />
+        <GreetingCard 
+        status={
+          (session as {status?: string} | null)
+          ?.status
+        }
+        />
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
@@ -250,13 +248,14 @@ setTimeout(() => {
 
         <div className="grid gap-6 lg:grid-cols-2">
           <QuickActions
-            loading={loading}
-            onStart={handleStartDay}
-            onEnd={handleEndDay}
-            onActivity={() =>
-              setOpenDialog(true)
-            }
-          />
+  loading={loading}
+  status={
+    (session as { status?: string } | null)?.status
+  }
+  onStart={handleStartDay}
+  onEnd={handleEndDay}
+  onActivity={() => setOpenDialog(true)}
+/>
 
           <div className="space-y-6">
             <Card className="h-105 overflow-hidden p-0">
