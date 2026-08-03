@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   MapPinned,
   Clock3,
   LogOut,
 } from "lucide-react";
+
+import api from "@/client-services/api";
 
 const associateLinks = [
   {
@@ -33,16 +35,6 @@ const branchLinks = [
     href: "/branch-head/dashboard",
     icon: LayoutDashboard,
   },
- /* {
-    name: "Associates",
-    href: "/branch-head/associates",
-    icon: Users,
-  },
-  {
-    name: "Reports",
-    href: "/branch-head/reports",
-    icon: FileSpreadsheet,
-  },*/
 ];
 
 interface SidebarProps {
@@ -53,17 +45,28 @@ export default function Sidebar({
   role,
 }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const links =
     role === "branch_head"
       ? branchLinks
       : associateLinks;
 
+  async function handleLogout() {
+    try {
+      await api.post("/auth/logout");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      router.replace("/login");
+      router.refresh();
+    }
+  }
+
   return (
     <aside className="hidden h-screen w-72 border-r border-slate-200 bg-white lg:flex lg:flex-col">
 
       <div className="border-b p-8">
-
         <h1 className="text-2xl font-bold">
           RAHA
         </h1>
@@ -71,11 +74,9 @@ export default function Sidebar({
         <p className="text-sm text-slate-500">
           Field Tracker
         </p>
-
       </div>
 
       <nav className="flex-1 space-y-2 p-4">
-
         {links.map((item) => {
           const Icon = item.icon;
 
@@ -90,22 +91,20 @@ export default function Sidebar({
               }`}
             >
               <Icon size={20} />
-
               {item.name}
             </Link>
           );
         })}
-
       </nav>
 
       <div className="border-t p-4">
-
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-600 transition hover:bg-red-50">
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-600 transition hover:bg-red-50"
+        >
           <LogOut size={18} />
-
           Logout
         </button>
-
       </div>
 
     </aside>
