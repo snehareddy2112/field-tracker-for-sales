@@ -4,10 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Users,
   MapPinned,
   Clock3,
-  FileSpreadsheet,
   LogOut,
 } from "lucide-react";
 
@@ -35,7 +33,7 @@ const branchLinks = [
     href: "/branch-head/dashboard",
     icon: LayoutDashboard,
   },
-  {
+ /* {
     name: "Associates",
     href: "/branch-head/associates",
     icon: Users,
@@ -44,7 +42,7 @@ const branchLinks = [
     name: "Reports",
     href: "/branch-head/reports",
     icon: FileSpreadsheet,
-  },
+  },*/
 ];
 
 interface SidebarProps {

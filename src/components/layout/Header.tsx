@@ -2,11 +2,10 @@
 
 import {
   Bell,
-  Search,
   Sun,
 } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
+//import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
   title: string;
@@ -32,19 +31,7 @@ export default function Header({
 
       <div className="flex items-center gap-4">
 
-        <div className="relative hidden md:block">
-
-          <Search
-            size={18}
-            className="absolute left-3 top-3.5 text-slate-400"
-          />
-
-          <Input
-            placeholder="Search..."
-            className="w-72 pl-10"
-          />
-
-        </div>
+      
 
         <button className="rounded-xl border p-3 hover:bg-slate-100">
           <Bell size={18} />
@@ -59,3 +46,19 @@ export default function Header({
     </header>
   );
 }
+
+/*
+ <div className="relative hidden md:block">
+
+          <Search
+            size={18}
+            className="absolute left-3 top-3.5 text-slate-400"
+          />
+
+          <Input
+            placeholder="Search..."
+            className="w-72 pl-10"
+          />
+
+        </div>
+*/
